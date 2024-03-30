@@ -1,0 +1,1 @@
+pub const TOTAL_CATEGORIES: i32 = 13;
