@@ -16,6 +16,7 @@ impl Categories {
         };
 
         ctg.load_data();
+        log::info!("data.rs::new - Categories: {:?}", ctg.categories.len());
         ctg
     }
 
@@ -24,10 +25,12 @@ impl Categories {
     }
 
     pub fn get_categories(&self, count: i32) -> Vec<HashMap<String, Value>> {
+        log::info!("data.rs::get_categories - count: {:?}", count);
         self.categories[..count as usize].to_vec()
     }
 
     pub fn get_category(&self, index: i32) -> &HashMap<String, Value> {
+        log::info!("data.rs::get_category - index: {:?}", index);
         &self.categories[index as usize]
     }
 
@@ -55,6 +58,7 @@ impl CategoryDetails {
     }
 
     pub fn get_detail(&self, category_number: &str) -> &Value {
+        log::info!("data.rs::get_detail - category_number: {:?}", category_number);
         &self.details[category_number]
     }
 

@@ -82,11 +82,14 @@ fn is_valid_index(index: i32) -> bool {
 fn get_categories(count: Option<i32>) -> ApiCategoriesResponse {
     let count = count.unwrap_or(TOTAL_CATEGORIES);
     if is_valid_count(count) {
+        log::info!("main.rs::get_categories - Getting {} categories", count);
         let categories = CATEGORIES.lock().unwrap();
         let categories = categories.get_categories(count);
+        log::info!("main.rs::get_categories - Found {} categories", categories.len());
         ApiCategoriesResponse::Success(Json(CategoriesResponse { categories }))
     } else {
-        let error_message = format!("Invalid count. Count must be between 1 and {}; got {}", TOTAL_CATEGORIES, count);
+        log::error!("main.rs::get_categories - Invalid count: {}", count);
+        let error_message = format!("main.rs::get_categories - Invalid count. Count must be between 1 and {}; got {}", TOTAL_CATEGORIES, count);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoriesResponse::Error(Status::BadRequest, Json(error_response))
     }
@@ -95,10 +98,12 @@ fn get_categories(count: Option<i32>) -> ApiCategoriesResponse {
 #[get("/api/categories/<index>")]
 fn get_category(index: i32) -> ApiCategoriesResponse {
     if is_valid_index(index) {
+        log::info!("main.rs::get_category - Getting category at index {}", index);
         let categories = CATEGORIES.lock().unwrap();
         let category = categories.get_category(index);
         ApiCategoriesResponse::Success(Json(CategoriesResponse { categories: vec![category.clone()] }))
     } else {
+        log::error!("main.rs::get_category - Invalid index: {}", index);
         let error_message = format!("Invalid index. Index must be between 1 and {}; got {}", TOTAL_CATEGORIES, index);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoriesResponse::Error(Status::BadRequest, Json(error_response))
@@ -107,6 +112,7 @@ fn get_category(index: i32) -> ApiCategoriesResponse {
 
 #[get("/api/details")]
 fn get_category_details() -> ApiCategoryDetailsResponse {
+    log::info!("main.rs::get_category_details - Getting category details");
     let details = CATEGORY_DETAILS.lock().unwrap();
     let details = details.get_details();
     ApiCategoryDetailsResponse::Success(Json(CategoryDetailsResponse { details: details.clone() }))
@@ -119,12 +125,14 @@ fn get_category_detail(category_number: &str) -> ApiCategoryDetailsResponse {
         "15", "16", "17", "18"
     ];
     if category_numbers.contains(&category_number) {
+        log::info!("main.rs::get_category_detail - Getting detail for category {}", category_number);
         let details = CATEGORY_DETAILS.lock().unwrap();
         let detail = details.get_detail(category_number);
         let mut details_map = HashMap::new();
         details_map.insert(category_number.to_string(), detail.clone());
         ApiCategoryDetailsResponse::Success(Json(CategoryDetailsResponse { details: details_map }))
     } else {
+        log::error!("main.rs::get_category_detail - Invalid category number: {}", category_number);
         let error_message = format!("Invalid category number. Category number must be one of {:?}", category_numbers);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoryDetailsResponse::Error(Status::BadRequest, Json(error_response))
@@ -133,6 +141,7 @@ fn get_category_detail(category_number: &str) -> ApiCategoryDetailsResponse {
 
 #[launch]
 fn rocket() -> _ {
+    env_logger::init();
     let cors = CorsOptions::default()
     .allowed_origins(AllowedOrigins::all())
     .allowed_methods(
