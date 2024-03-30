@@ -12,6 +12,7 @@ use serde_json::Value;
 
 use std::collections::HashMap;
 use std::sync::Mutex;
+use std::sync::Once;
 
 use crate::data::Categories;
 use crate::data::CategoryDetails;
@@ -22,6 +23,13 @@ mod constants;
 
 static CATEGORIES: Lazy<Mutex<Categories>> = Lazy::new(|| Mutex::new(Categories::new()));
 static CATEGORY_DETAILS: Lazy<Mutex<CategoryDetails>> = Lazy::new(|| Mutex::new(CategoryDetails::new()));
+static INIT: Once = Once::new();
+
+pub fn initialize_logger() {
+    INIT.call_once(|| {
+        env_logger::init();
+    });
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct CategoriesResponse {
@@ -74,8 +82,13 @@ fn is_valid_count(count: i32) -> bool {
     count > 0 && count <= TOTAL_CATEGORIES
 }
 
-fn is_valid_index(index: i32) -> bool {
-    index >= 0 && index <= TOTAL_CATEGORIES
+fn is_valid_id(index: &str) -> bool {
+    let category_numbers: Vec<&str> = vec![
+        "2", "3", "4", "6", "8", "9", "10", "11", "12", "13", "14",
+        "15", "16", "17", "18"
+    ];
+
+    return category_numbers.contains(&index);
 }
 
 #[get("/api/categories?<count>")]
@@ -95,16 +108,16 @@ fn get_categories(count: Option<i32>) -> ApiCategoriesResponse {
     }
 }
 
-#[get("/api/categories/<index>")]
-fn get_category(index: i32) -> ApiCategoriesResponse {
-    if is_valid_index(index) {
-        log::info!("main.rs::get_category - Getting category at index {}", index);
+#[get("/api/categories/<id>")]
+fn get_category(id: i32) -> ApiCategoriesResponse {
+    if is_valid_id(id.to_string().as_str()) {
+        log::info!("main.rs::get_category - Getting category at id {}", id);
         let categories = CATEGORIES.lock().unwrap();
-        let category = categories.get_category(index);
+        let category = categories.get_category(id);
         ApiCategoriesResponse::Success(Json(CategoriesResponse { categories: vec![category.clone()] }))
     } else {
-        log::error!("main.rs::get_category - Invalid index: {}", index);
-        let error_message = format!("Invalid index. Index must be between 1 and {}; got {}", TOTAL_CATEGORIES, index);
+        log::error!("main.rs::get_category - Invalid id: {}", id);
+        let error_message = format!("Invalid id. ID must be between 1 and {}; got {}", TOTAL_CATEGORIES, id);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoriesResponse::Error(Status::BadRequest, Json(error_response))
     }
@@ -141,7 +154,7 @@ fn get_category_detail(category_number: &str) -> ApiCategoryDetailsResponse {
 
 #[launch]
 fn rocket() -> _ {
-    env_logger::init();
+    initialize_logger();
     let cors = CorsOptions::default()
     .allowed_origins(AllowedOrigins::all())
     .allowed_methods(
@@ -186,7 +199,7 @@ mod tests {
     #[test]
     fn test_get_category() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
-        let response = client.get("/api/categories/1").dispatch();
+        let response = client.get("/api/categories/2").dispatch();
         assert_eq!(response.status(), Status::Ok);
     }
 
@@ -198,7 +211,7 @@ mod tests {
     }
 
     #[test]
-    fn test_invalid_index() {
+    fn test_invalid_id() {
         let client = Client::tracked(rocket()).expect("valid rocket instance");
         let response = client.get("/api/categories/25").dispatch();
         assert_eq!(response.status(), Status::BadRequest);

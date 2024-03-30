@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 pub struct Categories {
     categories: Vec<HashMap<String, Value>>,
+    error_response: HashMap<String, Value>,
 }
 
 pub struct CategoryDetails {
@@ -13,6 +14,7 @@ impl Categories {
     pub fn new() -> Categories {
         let mut ctg = Categories {
             categories: Vec::new(),
+            error_response: HashMap::new(),
         };
 
         ctg.load_data();
@@ -31,7 +33,13 @@ impl Categories {
 
     pub fn get_category(&self, index: i32) -> &HashMap<String, Value> {
         log::info!("data.rs::get_category - index: {:?}", index);
-        &self.categories[index as usize]
+        for category in self.categories.iter() {
+            if category["id"] == index {
+                return category;
+            }
+        }
+
+        &self.error_response
     }
 
     fn load_data(&mut self) {
@@ -84,7 +92,7 @@ mod tests {
     #[test]
     fn test_category() {
         let categories = Categories::new();
-        let category = categories.get_category(0);
+        let category = categories.get_category(2);
         assert_eq!(category["id"], 2);
         assert_eq!(category["title"], "baseball");
     }
