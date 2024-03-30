@@ -1,13 +1,8 @@
 use serde_json::Value;
 use std::collections::HashMap;
-use std::fs;
 
 pub struct Categories {
     categories: Vec<HashMap<String, Value>>,
-}
-
-pub struct Category {
-    category: HashMap<String, Value>,
 }
 
 pub struct CategoryDetails {
@@ -55,12 +50,12 @@ impl CategoryDetails {
         details
     }
 
-    pub fn get_details(&self, index: i32) -> &HashMap<String, Value> {
+    pub fn get_details(&self) -> &HashMap<String, Value> {
         &self.details
     }
 
-    pub fn get_detail(&self, index: i32) -> &Value {
-        &self.details[&index.to_string()]
+    pub fn get_detail(&self, category_number: &str) -> &Value {
+        &self.details[category_number]
     }
 
     fn load_data(&mut self) {
@@ -70,3 +65,23 @@ impl CategoryDetails {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_categories() {
+        let categories = Categories::new();
+        assert_eq!(categories.get_categories(1).len(), 1);
+        assert_eq!(categories.get_categories(2).len(), 2);
+        assert_eq!(categories.get_categories(3).len(), 3);
+    }
+
+    #[test]
+    fn test_category() {
+        let categories = Categories::new();
+        let category = categories.get_category(0);
+        assert_eq!(category["id"], 2);
+        assert_eq!(category["title"], "baseball");
+    }
+}
