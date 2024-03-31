@@ -116,8 +116,12 @@ fn get_category(id: i32) -> ApiCategoriesResponse {
         let category = categories.get_category(id);
         ApiCategoriesResponse::Success(Json(CategoriesResponse { categories: vec![category.clone()] }))
     } else {
+        let category_numbers: Vec<&str> = vec![
+            "2", "3", "4", "6", "8", "9", "10", "11", "12", "13", "14",
+            "15", "16", "17", "18"
+        ];
         log::error!("main.rs::get_category - Invalid id: {}", id);
-        let error_message = format!("Invalid id. ID must be between 1 and {}; got {}", TOTAL_CATEGORIES, id);
+        let error_message = format!("Invalid id. ID must be in {:?}; got {}", category_numbers, id);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoriesResponse::Error(Status::BadRequest, Json(error_response))
     }
