@@ -58,7 +58,7 @@ This will give you the clues, questions, and answers for all questions under ID 
 ## How to query this via JavaScript's Axios Library
 ```
 const baseUrl = "https://jeopardy-api-08c22fd2e683.herokuapp.com/";
-axios.get(`${baseUrl}/api/categories, {
+axios.get(`${baseUrl}/api/categories`, {
   headers: {
     'Content-Type': 'application/json'
   },
