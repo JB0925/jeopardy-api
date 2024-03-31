@@ -16,7 +16,7 @@ In addition, there are four endpoints:
 1. GET - "/api/categories?<count>" - Gets `count` number of categories. Note that if the count is left off, it will return all categories.
 2. GET - "/api/categories/<id>" - Gets a specific category.
 3. GET - "/api/details" - Gets all category details (questions, answers, etc.).
-4. GET - "/api/details" - Gets all questions/clues for a particular category.
+4. GET - "/api/details/<category_id>" - Gets all questions/clues for a particular category.
 
 **NOTE:** The provided data had category IDs of [2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], so please choose accordingly.
 
