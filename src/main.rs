@@ -16,7 +16,7 @@ use std::sync::Once;
 
 use crate::data::Categories;
 use crate::data::CategoryDetails;
-use crate::constants::constants::TOTAL_CATEGORIES;
+use crate::constants::constants::{CATEGORY_IDS, TOTAL_CATEGORIES};
 
 mod data;
 mod constants;
@@ -83,12 +83,7 @@ fn is_valid_count(count: i32) -> bool {
 }
 
 fn is_valid_id(index: &str) -> bool {
-    let category_numbers: Vec<&str> = vec![
-        "2", "3", "4", "6", "8", "9", "10", "11", "12", "13", "14",
-        "15", "16", "17", "18"
-    ];
-
-    return category_numbers.contains(&index);
+    return CATEGORY_IDS.contains(&index);
 }
 
 #[get("/api/categories?<count>")]
@@ -116,12 +111,8 @@ fn get_category(id: i32) -> ApiCategoriesResponse {
         let category = categories.get_category(id);
         ApiCategoriesResponse::Success(Json(CategoriesResponse { categories: vec![category.clone()] }))
     } else {
-        let category_numbers: Vec<&str> = vec![
-            "2", "3", "4", "6", "8", "9", "10", "11", "12", "13", "14",
-            "15", "16", "17", "18"
-        ];
         log::error!("main.rs::get_category - Invalid id: {}", id);
-        let error_message = format!("Invalid id. ID must be in {:?}; got {}", category_numbers, id);
+        let error_message = format!("Invalid id. ID must be in {:?}; got {}", CATEGORY_IDS, id);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoriesResponse::Error(Status::BadRequest, Json(error_response))
     }
@@ -137,11 +128,7 @@ fn get_category_details() -> ApiCategoryDetailsResponse {
 
 #[get("/api/details/<category_number>")]
 fn get_category_detail(category_number: &str) -> ApiCategoryDetailsResponse {
-    let category_numbers: Vec<&str> = vec![
-        "2", "3", "4", "6", "8", "9", "10", "11", "12", "13", "14",
-        "15", "16", "17", "18"
-    ];
-    if category_numbers.contains(&category_number) {
+    if CATEGORY_IDS.contains(&category_number) {
         log::info!("main.rs::get_category_detail - Getting detail for category {}", category_number);
         let details = CATEGORY_DETAILS.lock().unwrap();
         let detail = details.get_detail(category_number);
@@ -150,7 +137,7 @@ fn get_category_detail(category_number: &str) -> ApiCategoryDetailsResponse {
         ApiCategoryDetailsResponse::Success(Json(CategoryDetailsResponse { details: details_map }))
     } else {
         log::error!("main.rs::get_category_detail - Invalid category number: {}", category_number);
-        let error_message = format!("Invalid category number. Category number must be one of {:?}", category_numbers);
+        let error_message = format!("Invalid category number. Category number must be one of {:?}", CATEGORY_IDS);
         let error_response = ErrorResponse { error: error_message };
         ApiCategoryDetailsResponse::Error(Status::BadRequest, Json(error_response))
     }
