@@ -14,7 +14,7 @@ There are two main sections to this API:
 2. Category Details - clues, questions, and answers associated with each category ID.
 
 In addition, there are four endpoints:
-1. GET - "/api/categories?<count>" - Gets `count` number of categories. Note that if the count is left off, it will return all categories.
+1. GET - "/api/categories?count=" - Gets `count` number of categories. Note that if the count is left off, it will return all categories.
 2. GET - "/api/categories/<id>" - Gets a specific category.
 3. GET - "/api/details" - Gets all category details (questions, answers, etc.).
 4. GET - "/api/details/<category_id>" - Gets all questions/clues for a particular category.
