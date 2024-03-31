@@ -7,6 +7,7 @@ This API also uses the same data as the alternative that was suggested by Spring
 
 This application is deployed on Heroku at `https://jeopardy-api-08c22fd2e683.herokuapp.com/`. Please read below to find the endpoints used with the application ( there is no endpoint at the root ).
 
+
 ## API Structure
 There are two main sections to this API:
 1. Categories - Details about a category
@@ -20,6 +21,7 @@ In addition, there are four endpoints:
 
 **NOTE:** The provided data had category IDs of [2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], so please choose accordingly.
 
+
 ## How to query the API via Curl
 To get all category data, you can run this curl:
 ```
@@ -32,16 +34,19 @@ curl -v https://jeopardy-api-08c22fd2e683.herokuapp.com/api/categories?count=5
 ```
 This will return the first five categories ( there are fourteen ).
 
+
 To get data for a particular category, you can run this curl request:
 ```
 curl -v https://jeopardy-api-08c22fd2e683.herokuapp.com/api/categories/11
 ```
 This will provide category details for the category with the ID of 11.
 
+
 To get all category details (clues, questions, answers, etc.), you can run:
 ```
 curl -v https://jeopardy-api-08c22fd2e683.herokuapp.com/api/details
 ```
+
 
 Finally, to get details for a specific category ID, you can run:
 ```
@@ -71,6 +76,7 @@ axios.get(`${baseUrl}/api/categories, {
 
 You can, of course, use JavaScript's `async / await` syntax as well.
 
+
 ## How to query this via JavaScript's Fetch API
 ```
 fetch('https://jeopardy-api-08c22fd2e683.herokuapp.com/api/categories?count=5', {
@@ -83,6 +89,7 @@ fetch('https://jeopardy-api-08c22fd2e683.herokuapp.com/api/categories?count=5', 
 .catch(error => console.error('Error:', error));
 ```
 
+
 ## How to run this locally
 As this is intended to be a simple app, no database connection is needed. The category data is self contained in two `.json` files, which is read into memory when the application starts up.
 
@@ -91,8 +98,10 @@ To run the backend for this application, you need to:
 2. Clone this repository via `git clone git@github.com:JB0925/jeopardy-api.git`.
 3. Simply run `cargo run`. This will build the project and create a socket that binds on port 8000, where it listens for and accepts connections. You can then make the same requests as above; the base url would now be `http://127.0.0.1:8000`.
 
+
 ## How to run the tests
 At present, this application has roughly ten tests, mostly covering the normal scenarios and a few edge cases that occur when a user makes a bad request. To run those tests, simply run `cargo test` from your command line.
+
 
 ## Dependencies
 This project is based on a Rust web framework called `Rocket`. It also uses a few other dependencies. A full list of them can be found below:
