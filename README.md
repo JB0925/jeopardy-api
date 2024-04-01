@@ -15,7 +15,7 @@ There are two main sections to this API:
 
 In addition, there are four endpoints:
 1. GET - "/api/categories?count=" - Gets `count` number of categories. Note that if the count is left off, it will return all categories.
-2. GET - "/api/categories/<id>" - Gets a specific category.
+2. GET - "/api/categories/<_id>" - Gets a specific category.
 3. GET - "/api/details" - Gets all category details (questions, answers, etc.).
 4. GET - "/api/details/<category_id>" - Gets all questions/clues for a particular category.
 
@@ -57,7 +57,7 @@ This will give you the clues, questions, and answers for all questions under ID 
 
 ## How to query this via JavaScript's Axios Library
 ```
-const baseUrl = "https://jeopardy-api-08c22fd2e683.herokuapp.com/";
+const baseUrl = "https://jeopardy-api-08c22fd2e683.herokuapp.com";
 axios.get(`${baseUrl}/api/categories`, {
   headers: {
     'Content-Type': 'application/json'
